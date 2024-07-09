@@ -1,7 +1,7 @@
 
 ### 2. `main.py`
 
-```python
+# ```python
 """
 Assignment: Implement the most efficient algorithm to solve the given problem.
 
@@ -33,15 +33,64 @@ Example:
 """
 
 def longest_path(graph: list) -> int:
-    # Your implementation goes here
-    pass
+    ord_top = topological_sort(graph)
+    return calculate_longest_path(graph, ord_top)
 
 # Helper function to perform topological sort
 def topological_sort(graph):
-    # Your implementation goes here
-    pass
+    n = len(graph)
+    inDeg = [0] * n
+    for i in range(n):
+        for j, _ in graph[i]:
+            inDeg[j] += 1
 
+    queue = []
+    for i in range(n):
+        if inDeg[i] == 0:
+            queue.append(i)
+
+    ord_top = []
+    while queue:
+        node = queue.pop(0)
+        ord_top.append(node)
+        for i, _ in graph[node]:
+            inDeg[i] -= 1
+            if inDeg[i] == 0:
+                queue.append(i)
+
+    return ord_top
 # Function to calculate longest path using topological sort
-def calculate_longest_path(graph, topo_order):
-    # Your implementation goes here
-    pass
+def calculate_longest_path(graph, ord_top):
+    n = len(graph)
+    d = [-float('inf')] * n
+    d[ord_top[0]] = 0
+
+    for node in ord_top:
+        for i, weight in graph[node]:
+            if d[node] + weight > d[i]:
+                d[i] = d[node] + weight
+
+    return max(d)
+'''
+. for graph number 4 the output is coming out to be 2 instead of 3 .
+. checked for self loops in this graph sepecifically here is the code:
+def has_self_loop(graph):
+  for node, i in enumerate(graph):
+    if (node,) in i:
+      return True  # Self-loop found
+
+  return False  # No self-loops found
+
+graph4 = [
+  [(1, 1), (2, 1)],
+  [(3, 1)],
+  [(3, 1)],
+  []
+]
+
+if has_self_loop(graph4):
+  print("The graph contains at least one self-loop.")
+else:
+  print("The graph does not contain self-loops.")
+'''
+
